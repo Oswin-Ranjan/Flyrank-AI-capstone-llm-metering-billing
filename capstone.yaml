@@ -1,0 +1,13 @@
+run: docker compose up --build
+
+seed: python -m app.seed
+
+test: pytest
+
+base_url: http://localhost:8000
+
+endpoints:
+  - POST /generate
+  - GET /usage
+  - POST /billing/checkout
+  - POST /webhooks/stripe
