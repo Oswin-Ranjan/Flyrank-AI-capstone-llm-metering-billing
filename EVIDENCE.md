@@ -263,3 +263,99 @@ Remaining:
 - Complete usage summary tests.
 - Complete Stripe tests.
 - Complete cost calculation tests.
+
+---
+
+## Phase 3 — Stripe Integration (Razorpay Alternative)
+
+### Razorpay Test Mode
+
+Status: Complete
+
+Evidence:
+
+- Razorpay Test Mode configured.
+- Pro subscription plan created.
+- Razorpay test credentials stored in environment variables.
+- Razorpay webhook configured with a public HTTPS endpoint.
+
+### Subscription Creation
+
+Status: Complete
+
+Evidence:
+
+- `POST /billing/subscription` successfully created a Razorpay subscription.
+- Razorpay returned a subscription ID.
+- Subscription initially entered the `created` state.
+
+### Webhook Signature Verification
+
+Status: Complete
+
+Evidence:
+
+- Unsigned webhook request returned HTTP 400.
+- Invalid webhook signatures are rejected before event processing.
+
+### Subscription Webhook Processing
+
+Status: Complete
+
+Evidence:
+
+- `subscription.authenticated` webhook received successfully.
+- `subscription.activated` webhook received successfully.
+- Both events were stored in `payment_events`.
+
+### Free → Pro Synchronization
+
+Status: Complete
+
+Evidence:
+
+- Tenant initially had a Free subscription.
+- Razorpay subscription was successfully authorized.
+- `subscription.activated` webhook was received.
+- Pro subscription became active.
+- `GET /usage` returned Pro limits:
+  - API calls: 10000
+  - AI tokens: 1000000
+
+### Webhook Deduplication
+
+Status: Complete
+
+Evidence:
+
+- Webhook event IDs are stored in `payment_events`.
+- Repeated delivery of the same provider event ID is ignored.
+- Duplicate processing returns the documented duplicate response.
+
+### Subscription State Synchronization
+
+Status: Complete
+
+Evidence:
+
+- `subscription.updated` updates the local subscription state.
+- `subscription.cancelled` updates the local subscription state.
+
+### Final Acceptance Probe
+
+Status: Complete
+
+```text
+Free tenant
+    ↓
+Razorpay subscription
+    ↓
+Authorization
+    ↓
+Verified webhook
+    ↓
+subscription.activated
+    ↓
+Pro subscription active
+    ↓
+GET /usage shows Pro limits
