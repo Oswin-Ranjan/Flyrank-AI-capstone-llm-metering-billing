@@ -1,4 +1,5 @@
-fastapi
+fastapi==0.115.6
+starlette==0.41.3
 uvicorn[standard]
 sqlalchemy
 psycopg2-binary
@@ -8,5 +9,5 @@ pydantic-settings
 python-dotenv
 stripe
 pytest
-httpx<0.28
+httpx==0.27.2
 razorpay

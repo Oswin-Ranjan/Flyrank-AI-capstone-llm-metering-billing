@@ -59,10 +59,7 @@ def update_subscription(
     )
 
     if subscription is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Local subscription not found.",
-        )
+        return
 
     subscription.provider_customer_id = provider_customer_id
 
