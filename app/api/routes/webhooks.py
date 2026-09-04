@@ -59,7 +59,10 @@ def update_subscription(
     )
 
     if subscription is None:
-        return
+        raise HTTPException(
+            status_code=404,
+            detail="Local subscription not found.",
+        )
 
     subscription.provider_customer_id = provider_customer_id
     subscription.status = razorpay_status
@@ -74,7 +77,26 @@ def update_subscription(
         )
 
     if plan is not None and razorpay_status == "active":
+        # Make the newly activated subscription the current one.
+        old_subscriptions = db.scalars(
+            select(Subscription).where(
+                Subscription.tenant_id == subscription.tenant_id,
+                Subscription.id != subscription.id,
+                Subscription.status == "active",
+            )
+        ).all()
+
+        for old_subscription in old_subscriptions:
+            old_subscription.status = "inactive"
+
         subscription.plan_id = plan.id
+        subscription.status = "active"
+
+    elif razorpay_status == "cancelled":
+        subscription.status = "cancelled"
+
+    elif razorpay_status == "completed":
+        subscription.status = "completed"
 
 
 @router.post("/webhooks/razorpay")
