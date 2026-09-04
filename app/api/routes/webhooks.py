@@ -65,7 +65,6 @@ def update_subscription(
         )
 
     subscription.provider_customer_id = provider_customer_id
-    subscription.status = razorpay_status
 
     plan = None
 
@@ -76,8 +75,8 @@ def update_subscription(
             )
         )
 
-    if plan is not None and razorpay_status == "active":
-        # Make the newly activated subscription the current one.
+    if razorpay_status == "active":
+        # The newly activated subscription becomes the current one.
         old_subscriptions = db.scalars(
             select(Subscription).where(
                 Subscription.tenant_id == subscription.tenant_id,
@@ -89,14 +88,19 @@ def update_subscription(
         for old_subscription in old_subscriptions:
             old_subscription.status = "inactive"
 
-        subscription.plan_id = plan.id
         subscription.status = "active"
+
+        if plan is not None:
+            subscription.plan_id = plan.id
 
     elif razorpay_status == "cancelled":
         subscription.status = "cancelled"
 
     elif razorpay_status == "completed":
         subscription.status = "completed"
+
+    else:
+        subscription.status = razorpay_status
 
 
 @router.post("/webhooks/razorpay")
