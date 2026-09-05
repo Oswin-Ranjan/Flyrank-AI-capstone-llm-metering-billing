@@ -36,6 +36,10 @@ def generate(
         usage_type=request.usage_type,
         quantity=request.quantity,
         idempotency_key=idempotency_key,
+        input_tokens=request.input_tokens,
+        cached_input_tokens=request.cached_input_tokens,
+        output_tokens=request.output_tokens,
+        reasoning_tokens=request.reasoning_tokens,
     )
 
     return GenerateResponse(
@@ -43,6 +47,10 @@ def generate(
         tenant_id=usage_event.tenant_id,
         usage_type=usage_event.usage_type,
         quantity=usage_event.quantity,
+        input_tokens=usage_event.input_tokens,
+        cached_input_tokens=usage_event.cached_input_tokens,
+        output_tokens=usage_event.output_tokens,
+        reasoning_tokens=usage_event.reasoning_tokens,
         idempotency_key=usage_event.idempotency_key,
         status="recorded",
     )

@@ -342,4 +342,94 @@ def test_usage_tracks_api_calls_and_ai_tokens_separately(db):
     assert data["api_calls"]["used"] == 2
     assert data["ai_tokens"]["used"] == 50
 
-    app.dependency_overrides.clear()    
+    app.dependency_overrides.clear()  
+    
+def test_usage_endpoint_returns_calculated_cost(db):
+    tenant = create_tenant(db)
+
+    app.dependency_overrides[get_db] = override_get_db(db)
+
+    client = TestClient(app)
+
+    response = client.post(
+        "/generate",
+        headers={
+            "X-Tenant-ID": str(tenant.id),
+            "Idempotency-Key": "cost-api-test",
+        },
+        json={
+            "usage_type": "AI_TOKEN",
+            "quantity": 1000,
+            "input_tokens": 400,
+            "cached_input_tokens": 200,
+            "output_tokens": 300,
+            "reasoning_tokens": 100,
+        },
+    )
+
+    assert response.status_code == 200
+
+    usage_response = client.get(
+        "/usage",
+        headers={
+            "X-Tenant-ID": str(tenant.id),
+        },
+    )
+
+    assert usage_response.status_code == 200
+
+    data = usage_response.json()
+
+    assert data["ai_tokens"]["used"] == 1000
+    assert data["cost"] == 4200
+
+    app.dependency_overrides.clear() 
+    
+def test_retry_does_not_double_cost(db):
+    tenant = create_tenant(db)
+
+    app.dependency_overrides[get_db] = override_get_db(db)
+
+    client = TestClient(app)
+
+    headers = {
+        "X-Tenant-ID": str(tenant.id),
+        "Idempotency-Key": "cost-retry-001",
+    }
+
+    payload = {
+        "usage_type": "AI_TOKEN",
+        "quantity": 1000,
+        "input_tokens": 400,
+        "cached_input_tokens": 200,
+        "output_tokens": 300,
+        "reasoning_tokens": 100,
+    }
+
+    first = client.post(
+        "/generate",
+        headers=headers,
+        json=payload,
+    )
+
+    second = client.post(
+        "/generate",
+        headers=headers,
+        json=payload,
+    )
+
+    assert first.status_code == 200
+    assert second.status_code == 200
+
+    usage = client.get(
+        "/usage",
+        headers={
+            "X-Tenant-ID": str(tenant.id),
+        },
+    )
+
+    assert usage.status_code == 200
+    assert usage.json()["ai_tokens"]["used"] == 1000
+    assert usage.json()["cost"] == 4200
+
+    app.dependency_overrides.clear()         

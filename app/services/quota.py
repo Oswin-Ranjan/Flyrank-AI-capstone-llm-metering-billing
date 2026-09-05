@@ -81,6 +81,9 @@ class QuotaService:
         usage_type: UsageType,
         requested_quantity: int,
     ) -> None:
+        if usage_type == UsageType.AI_TOKEN:
+            return
+
         plan = self.get_active_plan(tenant)
         current_usage = self.get_current_usage(
             tenant,

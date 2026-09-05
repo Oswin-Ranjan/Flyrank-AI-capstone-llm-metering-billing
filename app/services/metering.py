@@ -18,6 +18,10 @@ class MeteringService:
         usage_type: UsageType,
         quantity: int,
         idempotency_key: str,
+        input_tokens: int = 0,
+        cached_input_tokens: int = 0,
+        output_tokens: int = 0,
+        reasoning_tokens: int = 0,
     ) -> UsageEvent:
         # 1. Check whether this request was already processed.
         existing_event = self.db.scalar(
@@ -42,6 +46,10 @@ class MeteringService:
             tenant_id=tenant.id,
             usage_type=usage_type.value,
             quantity=quantity,
+            input_tokens=input_tokens,
+            cached_input_tokens=cached_input_tokens,
+            output_tokens=output_tokens,
+            reasoning_tokens=reasoning_tokens,
             idempotency_key=idempotency_key,
         )
 

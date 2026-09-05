@@ -1,6 +1,12 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy import (
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -33,6 +39,30 @@ class UsageEvent(Base):
     quantity: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
+    )
+
+    input_tokens: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=0,
+    )
+
+    cached_input_tokens: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=0,
+    )
+
+    output_tokens: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=0,
+    )
+
+    reasoning_tokens: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=0,
     )
 
     idempotency_key: Mapped[str] = mapped_column(
