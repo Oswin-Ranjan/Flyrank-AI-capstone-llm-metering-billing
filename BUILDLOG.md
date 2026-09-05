@@ -197,7 +197,7 @@ The generated suggestions were reviewed, modified where necessary, and manually 
 
 ---
 
-## Phase 3 — Stripe Integration (Razorpay Alternative)
+## Phase 3 — Razorpay Integration
 
 ### Completed
 
@@ -224,3 +224,48 @@ The generated suggestions were reviewed, modified where necessary, and manually 
 ### AI assistance
 
 AI assistance was used to help structure and review the Razorpay integration, webhook handling, and tests. Implementation was manually reviewed and tested.
+
+---
+
+## Phase 4 — Cost & Finalization
+
+### Cost calculation
+
+Implemented:
+
+- Integer-based cost calculation.
+- API call pricing.
+- AI input-token pricing.
+- Cached input-token pricing.
+- Output-token pricing.
+- Reasoning-token pricing.
+
+Reasoning tokens use the same pricing as output tokens.
+
+### Usage rollup
+
+Updated `GET /usage` to return:
+
+- Current API call usage.
+- API call limit.
+- Current AI token usage.
+- AI token limit.
+- Current monthly cost.
+
+### Testing
+
+Added deterministic tests for:
+
+- API call cost.
+- AI token cost.
+- Cached input pricing.
+- Reasoning-token pricing.
+- Pinned pricing totals.
+- Usage cost rollup.
+- Retried requests not increasing cost twice.
+
+### AI assistance
+
+AI assistance was used to help structure the cost calculator and related tests.
+
+Pricing rules and expected values were reviewed manually and pinned in tests.

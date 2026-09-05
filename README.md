@@ -38,13 +38,27 @@ under retries, quota boundaries, and webhook duplication.
 - Stripe webhook verification
 - Duplicate webhook prevention
 
-## Non-Goal
+## Limitations
 
-Real payment processing and production billing are out of scope.
-Stripe test mode is used only for subscription-flow testing.
+The core implementation intentionally does not include:
+
+- Real production payments.
+- Overage billing.
+- Invoicing.
+- Proration.
+- Production-grade authentication.
+- Actual AI model calls.
+
+Razorpay Test Mode is used for subscription testing.
+
+AI token usage is simulated and only the usage numbers are metered.
 
 ## Project Status
 
 Phase 1 - Design and project setup
 
 Phase 2 - Core billing logic
+
+Phase 3 - Razorpay Integration
+
+Phase 4 - Cost & Finalization

@@ -266,7 +266,7 @@ Remaining:
 
 ---
 
-## Phase 3 — Stripe Integration (Razorpay Alternative)
+## Phase 3 — Razorpay Integration
 
 ### Razorpay Test Mode
 
@@ -359,3 +359,52 @@ subscription.activated
 Pro subscription active
     ↓
 GET /usage shows Pro limits
+```
+
+---
+
+## Phase 4 — Cost & Finalization
+
+### Cost Calculation
+
+Status: Complete
+
+Evidence:
+
+- API call cost is calculated using integer units.
+- AI token costs distinguish fresh input, cached input, output, and reasoning tokens.
+- Cached input uses a lower price than fresh input.
+- Reasoning tokens use output pricing.
+- Pinned pricing tests verify exact totals.
+
+### Usage Cost Rollup
+
+Status: Complete
+
+Evidence:
+
+- `GET /usage` returns current monthly API usage.
+- `GET /usage` returns current monthly AI token usage.
+- `GET /usage` returns the active plan limits.
+- `GET /usage` returns the calculated monthly cost.
+- Retry of the same idempotent AI request did not increase usage or cost twice.
+
+### Cost Tests
+
+Status: Complete
+
+Command:
+
+```bash
+pytest -v
+```
+
+### Evidence
+
+- API call pricing test passed.
+- AI token pricing test passed.
+- Cached input pricing test passed.
+- Reasoning token pricing test passed.
+- Pinned cost test passed.
+- Retry/double-cost test passed.
+- Full test suite passed.
